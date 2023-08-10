@@ -15,18 +15,12 @@ jobs:
         - name: ^ Checkout
           uses: actions/checkout@v3
 
+        - name: Checkout submodules
+          uses: textbook/git-checkout-submodule-action@master
+
         - name: Copy data.
           run: |
               cp -r "$(pwd)" /source
-
-        - name: Initialize submodules.
-          run: |
-              cd /source
-              apk add --no-cache git
-
-              ls -a
-
-              git submodule update --remote
 
         - name: Set up environment.
           run: |
@@ -83,18 +77,15 @@ jobs:
         - name: ^ Checkout
           uses: actions/checkout@v3
 
+        - name: Checkout submodules
+          uses: textbook/git-checkout-submodule-action@master
+
         - name: Copy data.
           run: |
               cp -r "$(pwd)" /source
 
         - name: Update runtime
           run: apt update
-
-        - name: Initialize submodules.
-          run: |
-              cd /source
-              apt install -y git
-              git submodule update --remote
 
         - name: Set up environment.
           run: |
@@ -140,18 +131,15 @@ jobs:
         - name: ^ Checkout
           uses: actions/checkout@v3
 
+        - name: Checkout submodules
+          uses: textbook/git-checkout-submodule-action@master
+
         - name: Copy data.
           run: |
               cp -r "$(pwd)" /source
 
         - name: Update runtime
           run: apt update
-
-        - name: Initialize submodules.
-          run: |
-              cd /source
-              apt install -y git
-              git submodule update --remote
 
         - name: Set up environment.
           run: |
@@ -201,6 +189,7 @@ jobs:
 
   Pages:
     runs-on: ubuntu-latest
+    needs: [Musl, Windows, GLibc]
 
     container: alpine
 
@@ -221,6 +210,14 @@ jobs:
               echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
               echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
               echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Catch artifacts
+          run: |
+              mkdir /source/artifacts
+              cd /source/artifacts
+              cp ${{ needs.Musl.outputs.artifact2_path }} ./tlapbot_musl.zip
+              cp ${{ needs.GLibc.outputs.artifact2_path }} ./tlapbot_glibc.zip
+              cp ${{ needs.Windows.outputs.artifact1_path }} ./tlapbot_windows.zip
 
         - name: Run Init.
           run: cd /source && sh init.sh
