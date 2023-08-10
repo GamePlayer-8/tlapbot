@@ -16,7 +16,7 @@ for X in $(cat requirements.txt); do
     py_deps_tlapbot=$py_deps_tlapbot' --collect-all '$X
 done
 
-py_deps_tlapbot=$py_deps_tlapbot' --collect-all tlapbot.default_config --collect-all tlapbot.default_redeems --collect-all tlapbot.sqlite'
+py_deps_tlapbot=$py_deps_tlapbot' --collect-all tlapbot.default_config --collect-all tlapbot.default_redeems'
 
 for X in $(find . -name '__pycache__'); do
     rm -rf "$X"
