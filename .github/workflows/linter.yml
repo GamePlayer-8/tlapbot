@@ -15,11 +15,15 @@ jobs:
         - name: ^ Checkout
           uses: actions/checkout@v3
 
-        - name: Create build dir.
-          run: mkdir /source
-
         - name: Copy data.
-          run: cp -r * /source/
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Initialize submodules.
+          run: |
+              cd /source
+              apk add --no-cache git
+              git submodule update --remote
 
         - name: Run Init.
           run: cd /source && sh pylint.sh
