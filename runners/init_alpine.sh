@@ -1,18 +1,10 @@
 #!/bin/sh
 
+SCRIPT_PATH="$(dirname "$(realpath "$0")")"
+
 cp /etc/ssl/certs/ca-certificates.crt /
 
-apk add --no-cache markdown > /dev/null
 cd /source
-
-echo '<!DOCTYPE html>' > index.html
-echo '<html lang="en-US">' >> index.html
-cat docs/head.html >> index.html
-
-echo '<body>' >> index.html
-markdown README.md >> index.html
-echo '</body>' >> index.html
-echo '</html>' >> index.html
 
 apk add --no-cache apk-tools-static py-pip linux-headers build-base python3-dev xvfb appstream tar libc6-compat curl upx > /dev/null
 
@@ -37,6 +29,7 @@ apk add --allow-untrusted --no-cache -f /tmp/*.apk > /dev/null
 /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
 pip install --upgrade wheel setuptools > /dev/null
+sh scripts/generate_requirements.sh resource/setup.py requirements.txt
 pip install -r requirements.txt > /dev/null
 pip install pyinstaller > /dev/null
 
@@ -55,14 +48,13 @@ for X in $(cat requirements.txt); do
 done
 
 py_deps_tlapbot=$py_deps_tlapbot' --collect-all tlapbot.default_config --collect-all tlapbot.default_redeems --collect-all tlapbot.sqlite'
-py_deps_tlapbot=$py_deps_tlapbot' --collect-all tzdata'
 
-for X in $(find tlapbot/ -name '__pycache__'); do
+for X in $(find . -name '__pycache__'); do
     rm -rf "$X"
 done
 
 py_data_tlapbot=""
-for X in ./tlapbot/*; do
+for X in ./resource/tlapbot/*; do
     if [ -f "$X" ]; then
         BASENAME=$(basename "$X")
         py_data_tlapbot=$py_data_tlapbot" --add-data $BASENAME:."
@@ -70,12 +62,14 @@ for X in ./tlapbot/*; do
 done
 
 py_dirs_tlapbot=""
-for X in ./tlapbot/*; do
+for X in ./resource/tlapbot/*; do
     if [ -d "$X" ]; then
         BASENAME=$(basename "$X")
         py_dirs_tlapbot=$py_dirs_tlapbot" --add-data $BASENAME/*:$BASENAME/"
     fi
 done
+
+cd resource
 
 python3 setup.py build
 python3 setup.py install
@@ -84,7 +78,7 @@ cd tlapbot
 
 DISPLAY=":0" pyinstaller -F --onefile --console \
  --additional-hooks-dir=. $py_dirs_tlapbot $py_data_tlapbot \
-  $py_deps_tlapbot -i ../docs/icon.png -n tlapbot -c standalone.py
+  $py_deps_tlapbot -i ../../docs/icon.png -n tlapbot -c standalone.py
 
 mv dist/tlapbot ../tlapbot-musl
 rm -rf dist build log
@@ -126,7 +120,7 @@ echo 'exec "${tlapbot_RUNPATH}"/lib/ld-musl-x86_64.so.1 "${tlapbot_EXEC}" "$@"' 
 chmod +x tlapbot.AppDir/AppRun
 
 mkdir -p tlapbot.AppDir/usr/bin
-cp tlapbot-musl tlapbot.AppDir/usr/bin/tlapbot
+cp resource/tlapbot-musl tlapbot.AppDir/usr/bin/tlapbot
 chmod +x tlapbot.AppDir/usr/bin/tlapbot
 
 wget -q https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -O toolkit.AppImage
@@ -143,12 +137,11 @@ ARCH=x86_64 appimagetool tlapbot.AppDir/
 
 rm -rf tlapbot.AppDir
 rm -f toolkit.AppImage
-rm -rf tlapbot.egg-info
+rm -rf resource/tlapbot.egg-info
+
 chmod +x tlapbot-x86_64.AppImage
 mv tlapbot-x86_64.AppImage tlapbot-musl-x86_64.AppImage
-
-sha256sum tlapbot-musl > sha256sum.txt
-sha256sum tlapbot-musl-x86_64.AppImage >> sha256sum.txt
+mv resource/tlapbot-musl .
 
 mkdir -pv /runner/page/
 cp -rv /source/* /runner/page/

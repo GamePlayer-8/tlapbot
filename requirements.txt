@@ -1,6 +1,3 @@
-flask
-requests
-apscheduler
 gunicorn
 pytest-shutil
 tzdata

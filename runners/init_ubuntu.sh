@@ -4,21 +4,12 @@ export TZ="Europe/Warsaw"
 export DEBIAN_FRONTEND=noninteractive
 
 apt update > /dev/null
-apt install --yes markdown > /dev/null
 cd /source
-
-echo '<!DOCTYPE html>' > index.html
-echo '<html lang="en-US">' >> index.html
-cat docs/head.html >> index.html
-
-echo '<body>' >> index.html
-markdown README.md >> index.html
-echo '</body>' >> index.html
-echo '</html>' >> index.html
 
 apt install --yes python3-pip linux-headers-$(uname -r) build-essential python3-dev xvfb appstream tar lsb-release apt-utils file upx > /dev/null
 
 pip install --upgrade wheel setuptools > /dev/null
+sh scripts/generate_requirements.sh resource/setup.py requirements.txt
 pip install -r requirements.txt > /dev/null
 pip install pyinstaller > /dev/null
 
@@ -31,14 +22,13 @@ for X in $(cat requirements.txt); do
 done
 
 py_deps_tlapbot=$py_deps_tlapbot' --collect-all tlapbot.default_config --collect-all tlapbot.default_redeems --collect-all tlapbot.sqlite'
-py_deps_tlapbot=$py_deps_tlapbot' --collect-all tzdata'
 
 for X in $(find . -name '__pycache__'); do
     rm -rf "$X"
 done
 
 py_data_tlapbot=""
-for X in ./tlapbot/*; do
+for X in ./resource/tlapbot/*; do
     if [ -f "$X" ]; then
         BASENAME=$(basename "$X")
         py_data_tlapbot=$py_data_tlapbot" --add-data $BASENAME:."
@@ -46,12 +36,14 @@ for X in ./tlapbot/*; do
 done
 
 py_dirs_tlapbot=""
-for X in ./tlapbot/*; do
+for X in ./resource/tlapbot/*; do
     if [ -d "$X" ]; then
         BASENAME=$(basename "$X")
         py_dirs_tlapbot=$py_dirs_tlapbot" --add-data $BASENAME/*:$BASENAME/"
     fi
 done
+
+cd resource
 
 python3 setup.py build
 python3 setup.py install
@@ -60,7 +52,7 @@ cd tlapbot
 
 DISPLAY=":0" pyinstaller -F --onefile --console \
  --additional-hooks-dir=. $py_dirs_tlapbot $py_data_tlapbot \
-  $py_deps_tlapbot -i ../docs/icon.png -n tlapbot -c standalone.py
+  $py_deps_tlapbot -i ../../docs/icon.png -n tlapbot -c standalone.py
 
 mv dist/tlapbot ../tlapbot-glibc
 rm -rf dist build log
@@ -70,6 +62,8 @@ cd ..
 strip tlapbot-glibc
 
 chmod +x tlapbot-glibc
+
+cd /source
 
 mkdir -p tlapbot.AppDir/var/lib/dpkg
 mkdir -p tlapbot.AppDir/var/cache/apt/archives
@@ -103,7 +97,7 @@ echo 'exec "${tlapbot_EXEC}" "$@"' >> tlapbot.AppDir/AppRun
 chmod +x tlapbot.AppDir/AppRun
 
 mkdir -p tlapbot.AppDir/usr/bin
-cp tlapbot-glibc tlapbot.AppDir/usr/bin/tlapbot
+cp resource/tlapbot-glibc tlapbot.AppDir/usr/bin/tlapbot
 chmod +x tlapbot.AppDir/usr/bin/tlapbot
 
 wget -q https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -O toolkit.AppImage
@@ -122,11 +116,9 @@ mv tlapbot-x86_64.AppImage tlapbot-glibc-x86_64.AppImage
 
 rm -rf tlapbot.AppDir
 rm -f toolkit.AppImage
-rm -rf tlapbot.egg-info
+rm -rf resource/tlapbot.egg-info
 chmod +x tlapbot-glibc-x86_64.AppImage
-
-sha256sum tlapbot-glibc > sha256sum.txt
-sha256sum tlapbot-glibc-x86_64.AppImage >> sha256sum.txt
+mv resource/tlapbot-glibc .
 
 mkdir -pv /runner/page/
 cp -rv /source/* /runner/page/
