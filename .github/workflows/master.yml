@@ -23,6 +23,9 @@ jobs:
           run: |
               cd /source
               apk add --no-cache git
+
+              ls -a
+
               git submodule update --remote
 
         - name: Set up environment.
