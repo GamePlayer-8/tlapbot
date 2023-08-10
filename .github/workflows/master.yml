@@ -36,6 +36,9 @@ jobs:
               echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
               echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
               echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
               echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
               echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
 
@@ -110,6 +113,9 @@ jobs:
               echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
               echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
               echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
               echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
               echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
 
@@ -171,6 +177,9 @@ jobs:
               echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
               echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
               echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
               echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
               echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
 
@@ -215,6 +224,11 @@ jobs:
     container: alpine
 
     steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
         - name: ^ Checkout
           uses: actions/checkout@v3
 
@@ -229,6 +243,9 @@ jobs:
               echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
               echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
               echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
               echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
               echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
 
