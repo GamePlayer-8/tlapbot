@@ -12,10 +12,18 @@ jobs:
     container: alpine
 
     steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
         - name: ^ Checkout
-          uses: actions/checkout@v3
-          with:
-            submodules: 'recursive'
+          run: |
+              apk add --no-cache git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
 
         - name: Copy data.
           run: |
@@ -73,17 +81,25 @@ jobs:
       options: --user root
 
     steps:
+        - name: Update runtime
+          run: apt update
+
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
         - name: ^ Checkout
-          uses: actions/checkout@v3
-          with:
-            submodules: 'recursive'
+          run: |
+              apt install -y git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
 
         - name: Copy data.
           run: |
               cp -r "$(pwd)" /source
-
-        - name: Update runtime
-          run: apt update
 
         - name: Set up environment.
           run: |
@@ -126,17 +142,25 @@ jobs:
       options: --user root
 
     steps:
+        - name: Update runtime
+          run: apt update
+
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
         - name: ^ Checkout
-          uses: actions/checkout@v3
-          with:
-            submodules: 'recursive'
+          run: |
+              apt install -y git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
 
         - name: Copy data.
           run: |
               cp -r "$(pwd)" /source
-
-        - name: Update runtime
-          run: apt update
 
         - name: Set up environment.
           run: |
