@@ -1,8 +1,14 @@
 <p align="center" style="white-space: pre-line;">
-  <a href="https://chimmie.k.vu/tlapbot">
+  <a href="https://chimmie.k.vu/tlapbot" class="no-highlight">
     <img src="docs/tlapbot-splash-text.png" width="400" alt=":tlapbot-splash:">
   </a>
-  <hr/>
+</p>
+
+<p align="center">
+  <a href="actions"><img src="https://github.com/GamePlayer-8/tlapbot/actions/workflows/master.yml/badge.svg?branch=main" alt=":master_workflow:" height="35" /></a>
+  <a href="issues"><img alt=":github_issues:" src="https://img.shields.io/github/issues/GamePlayer-8/tlapbot" height="35" /></a>
+  <a href="LICENSE.txt"><img alt=":license:" src="https://img.shields.io/github/license/GamePlayer-8/tlapbot" height="35" /></a>
+  <a href="discussions"><img alt=":code_size:" src="https://img.shields.io/github/languages/code-size/GamePlayer-8/tlapbot" height="35" /></a>
 </p>
 
 Tlapbot is an [Owncast](https://owncast.online/) bot that adds channel points and

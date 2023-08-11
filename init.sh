@@ -22,12 +22,12 @@ echo '</html>' >> about.html
 
 echo '<!DOCTYPE html>' > docs.html
 echo '<html lang="en-US">' >> docs.html
-cat docs/head.html >> docs.html
+cat docs/head-docs.html >> docs.html
 
 echo '<body>' >> docs.html
-echo '<div class="content">' >> about.html
+echo '<div class="content">' >> docs.html
 markdown resource/README.md >> docs.html
-echo '</div>' >> about.html
+echo '</div>' >> docs.html
 echo '</body>' >> docs.html
 echo '</html>' >> docs.html
 

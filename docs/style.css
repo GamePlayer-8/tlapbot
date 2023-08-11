@@ -17,7 +17,7 @@ body {
 	background-image: linear-gradient(to top, #ffb14b23, #e0baff 70%, #ffb4533e);
 	background-repeat: no-repeat;
 	background-position: bottom;
-	background-size: 100% auto;
+	background-size: 100%;
 	z-index: 1;
 }
 
@@ -197,8 +197,8 @@ a {
 	margin-top: 5px;
 	width: auto;
 	box-shadow: 0 2px 4px rgba(255, 221, 0, 0.3);
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .header>* {
@@ -237,6 +237,10 @@ a {
 
 .header div a:active {
     background-color: #3d3b0ed6;
+}
+
+.no-highlight, .no-highlight:hover, .no-highlight:active {
+	background-color: #00000000;
 }
 
 .header div>a:last-child {
