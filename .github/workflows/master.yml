@@ -67,13 +67,13 @@ jobs:
         - name: Upload AppImage.
           uses: actions/upload-artifact@v3
           with:
-            name: AppImage
+            name: Musl AppImage
             path: /artifacts/AppImage
 
         - name: Upload Binary.
           uses: actions/upload-artifact@v3
           with:
-            name: Binary
+            name: Musl Binary
             path: /artifacts/Binary
 
   Windows:
@@ -137,7 +137,7 @@ jobs:
         - name: Upload Binary.
           uses: actions/upload-artifact@v3
           with:
-            name: Binary
+            name: Windows Binary
             path: /artifacts/Binary
 
   GLibc:
@@ -208,13 +208,13 @@ jobs:
         - name: Upload AppImage.
           uses: actions/upload-artifact@v3
           with:
-            name: AppImage
+            name: GLibc AppImage
             path: /artifacts/AppImage
 
         - name: Upload Binary.
           uses: actions/upload-artifact@v3
           with:
-            name: Binary
+            name: Glibc Binary
             path: /artifacts/Binary
 
   Pages:
@@ -249,13 +249,35 @@ jobs:
               echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
               echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
 
-        - name: Catch artifacts
+        - name: Create directories for artifacts
           run: |
-              mkdir /source/artifacts
-              cd /source/artifacts
-              cp ${{ needs.Musl.outputs.artifact2_path }} ./tlapbot_musl.zip
-              cp ${{ needs.GLibc.outputs.artifact2_path }} ./tlapbot_glibc.zip
-              cp ${{ needs.Windows.outputs.artifact1_path }} ./tlapbot_windows.zip
+              mkdir -p /source/artifacts/binary
+              mkdir /source/artifacts/appimage
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Windows Binary
+            path: /source/artifacts/binary
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Musl Binary
+            path: /source/artifacts/binary
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Glibc Binary
+            path: /source/artifacts/binary
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: GLibc AppImage
+            path: /source/artifacts/appimage
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Musl AppImage
+            path: /source/artifacts/appimage
 
         - name: Run Init.
           run: cd /source && sh init.sh
