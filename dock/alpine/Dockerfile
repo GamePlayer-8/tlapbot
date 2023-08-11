@@ -6,8 +6,7 @@ RUN chmod +x /usr/bin/tlapbot
 
 RUN adduser -D tlapbot
 
-RUN mkdir /home/tlapbot && \
-    chown -R tlapbot:tlapbot /home/tlapbot
+RUN chown -R tlapbot:tlapbot /home/tlapbot
 
 USER tlapbot
 
