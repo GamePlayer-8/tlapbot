@@ -265,7 +265,8 @@ jobs:
         - name: Run Init.
           run: |
               cd /source
-              sh scripts/deploy-container.sh alpine tlapbot-alpine:"$GIT_BRANCH" dock/alpine
+              apk add --no-cache bash
+              bash scripts/deploy-container.sh alpine tlapbot-alpine:"$GIT_BRANCH" dock/alpine
 
   UbuntuContainer:
     runs-on: ubuntu-latest
@@ -319,7 +320,8 @@ jobs:
         - name: Run Init.
           run: |
               cd /source
-              sh scripts/deploy-container.sh ubuntu tlapbot-ubuntu:"$GIT_BRANCH" dock/ubuntu
+              apk add --no-cache bash
+              bash scripts/deploy-container.sh ubuntu tlapbot-ubuntu:"$GIT_BRANCH" dock/ubuntu
 
   Pages:
     runs-on: ubuntu-latest
