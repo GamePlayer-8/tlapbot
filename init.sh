@@ -38,4 +38,5 @@ sh /source/scripts/set.sh /source/docs/parser.conf /source/download.html
 sh /source/scripts/set.sh /source/docs/parser.conf /source/docs.html
 sh /source/scripts/set.sh /source/docs/parser.conf /source/README.md
 
+mkdir /runner
 cp -rv /source /runner/page
