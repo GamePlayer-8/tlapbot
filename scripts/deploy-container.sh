@@ -17,9 +17,9 @@ if [ -z "$3" ]; then
     exit 3
 fi
 
-cd "$SCRIPT_PATH"/..
+cd /source
 
-apk add --no-cache podman fuse-overlayfs gawk
+apk add --no-cache podman fuse-overlayfs gawk tar gzip
 
 cp pipeline/containers.conf /etc/containers/containers.conf
 chmod 644 /etc/containers/containers.conf && \
