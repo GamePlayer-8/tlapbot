@@ -2,17 +2,17 @@
 
 SCRIPT_PATH="$(dirname "$(realpath "$0")")"
 
-if ! [ -z "$1" ]; then
+if [ -z "$1" ]; then
     echo "Missing the pull image!"
     exit 1
 fi
 
-if ! [ -z "$2" ]; then
+if [ -z "$2" ]; then
     echo "Missing the output image name!"
     exit 2
 fi
 
-if ! [ -z "$3" ]; then
+if [ -z "$3" ]; then
     echo "Missing Dockerfile path!"
     exit 3
 fi
