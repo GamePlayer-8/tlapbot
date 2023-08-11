@@ -314,10 +314,6 @@ jobs:
             name: Glibc Binary
             path: /source/dock/ubuntu
 
-        - name: Check
-          run: |
-              ls /source/dock/alpine
-
         - name: Run Init.
           run: |
               cd /source
