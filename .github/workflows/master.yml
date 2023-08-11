@@ -334,7 +334,12 @@ jobs:
               echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
         - name: ^ Checkout
-          uses: actions/checkout@v3
+          run: |
+              apk add --no-cache git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
 
         - name: Copy data.
           run: |
@@ -355,18 +360,19 @@ jobs:
 
         - name: Create directories for artifacts
           run: |
-              mkdir -p /source/artifacts/binary
-              mkdir /source/artifacts/appimage
+              mkdir -p /source/artifacts/binary/win
+              mkdir /source/artifacts/binary/musl
+              mkdir -p /source/artifacts/appimage/musl
 
         - uses: actions/download-artifact@v3
           with:
             name: Windows Binary
-            path: /source/artifacts/binary
+            path: /source/artifacts/binary/win
 
         - uses: actions/download-artifact@v3
           with:
             name: Musl Binary
-            path: /source/artifacts/binary
+            path: /source/artifacts/binary/musl
 
         - uses: actions/download-artifact@v3
           with:
@@ -381,7 +387,7 @@ jobs:
         - uses: actions/download-artifact@v3
           with:
             name: Musl AppImage
-            path: /source/artifacts/appimage
+            path: /source/artifacts/appimage/musl
 
         - name: Run Init.
           run: cd /source && sh init.sh
@@ -389,4 +395,5 @@ jobs:
         - name: Deploy branch
           run: |
               apk add --no-cache git bash
+              rm -rf /source/resource
               bash /source/scripts/gh-pages.sh
