@@ -15,3 +15,7 @@ build/
 *.spec
 resource/
 tlapbot/
+
+*.orig
+*.rej
+*.patch

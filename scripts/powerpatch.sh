@@ -16,6 +16,6 @@ done
 
 for X in $(find "$1" -type f); do
     diff -u "$X" "$2"/"$(basename "$X")" > "$1"/"$(basename "$X")".patch
-    patch -f --input="$1"/"$(basename "$X")".patch "$2"/"$(basename "$X")"
+    patch -R -i "$1"/"$(basename "$X")".patch "$2"/"$(basename "$X")"
     rm -f "$1"/"$(basename "$X")".patch
 done
