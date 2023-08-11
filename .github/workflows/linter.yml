@@ -30,4 +30,17 @@ jobs:
               cp -r "$(pwd)" /source
 
         - name: Run Init.
-          run: cd /source && sh pylint.sh
+          run: |
+              cd /source
+              sh pylint.sh 2>&1 3>&1 | tee /pylint-"$(date +%Y-%m-%d)".log
+
+        - name: Publish the log.
+          run: |
+              mkdir /artifacts
+              mv /pylint-* /artifacts/
+
+        - name: Upload Log.
+          uses: actions/upload-artifact@v3
+          with:
+            name: PyLint Log
+            path: /artifacts
