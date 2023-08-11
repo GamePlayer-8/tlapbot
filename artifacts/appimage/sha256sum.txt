@@ -1,1 +1,1 @@
-b1bfea3b65c5e6dea28b4f7598736ec834cb35b6fcbc7bceeadfd0bd41efb88b  tlapbot-x86_64.AppImage
+3faa0200d007ddeb9a37f9273b6eb12c0571c12a819f110ee41c9957ed1a9213  tlapbot-x86_64.AppImage
