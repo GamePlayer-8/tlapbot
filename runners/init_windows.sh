@@ -6,7 +6,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt update > /dev/null
 cd /source
 
-apt install --yes wine apt-utils tar wget xvfb winetricks > /dev/null
+apt install --yes wine apt-utils tar wget xvfb winetricks bash > /dev/null
 dpkg --add-architecture i386 && apt-get update > /dev/null && apt-get install --yes wine32 > /dev/null
 
 sed -i 's/gunicorn/waitress/g' requirements.txt # Remove gunicorn due to missing fnctl for Windows
@@ -21,6 +21,7 @@ for X in $(find . -name '__pycache__'); do
 done
 
 cp -r /source/patches/* /source/resource/tlapbot/
+bash /source/scripts/powerpatch.sh /source/patchespartial /source/resource/tlapbot
 
 py_data_tlapbot=""
 for X in ./resource/tlapbot/*; do
