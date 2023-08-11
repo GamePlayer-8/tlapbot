@@ -1,5 +1,3 @@
-# Tlapbot
-
 <p align="center" style="white-space: pre-line;">
   <a href="https://chimmie.k.vu/tlapbot">
     <img src="docs/tlapbot-splash-text.png" width="400" alt=":tlapbot-splash:">
