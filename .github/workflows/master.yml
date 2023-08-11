@@ -266,6 +266,7 @@ jobs:
           run: |
               cd /source
               apk add --no-cache bash
+              if [ "$GIT_BRANCH" == "main" ]; then export GIT_BRANCH="latest"; fi
               bash scripts/deploy-container.sh alpine tlapbot-alpine:"$GIT_BRANCH" dock/alpine
 
   UbuntuContainer:
@@ -313,14 +314,11 @@ jobs:
             name: Glibc Binary
             path: /source/dock/ubuntu
 
-        - name: Check
-          run: |
-              ls /source/dock/alpine
-
         - name: Run Init.
           run: |
               cd /source
               apk add --no-cache bash
+              if [ "$GIT_BRANCH" == "main" ]; then export GIT_BRANCH="latest"; fi
               bash scripts/deploy-container.sh ubuntu tlapbot-ubuntu:"$GIT_BRANCH" dock/ubuntu
 
   Pages:
