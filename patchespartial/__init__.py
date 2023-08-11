@@ -57,8 +57,8 @@ def create_app():
     app.config.from_mapping(
         DATABASE=os.path.join(app.instance_path, "tlapbot.sqlite")
     )
-    app.config.from_object('tlapbot.default_config')
-    app.config.from_object('tlapbot.default_redeems')
+    app.config.from_object('default_config')
+    app.config.from_object('default_redeems')
     app.config.from_pyfile(app.instance_path + '/config.py', silent=False)
     app.config.from_pyfile(app.instance_path + '/redeems.py', silent=False)
 
