@@ -51,7 +51,7 @@ for X in $(find . -name '__pycache__'); do
     rm -rf "$X"
 done
 
-cp /source/patches/standalone.py /source/resource/tlapbot/
+cp /source/patches/* /source/resource/tlapbot/
 
 py_data_tlapbot=""
 for X in ./resource/tlapbot/*; do
