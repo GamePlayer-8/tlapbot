@@ -260,10 +260,6 @@ jobs:
             name: Musl Binary
             path: /source/dock/alpine
 
-        - name: Check
-          run: |
-              ls /source/dock/alpine
-
         - name: Run Init.
           run: |
               cd /source
@@ -311,6 +307,10 @@ jobs:
           with:
             name: Glibc Binary
             path: /source/dock/ubuntu
+
+        - name: Check
+          run: |
+              ls /source/dock/alpine
 
         - name: Run Init.
           run: |
