@@ -221,8 +221,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Musl]
 
-    container: alpine
-    options: --privileged
+    container:
+        image: alpine
+        options: --privileged
 
     steps:
         - name: Setup basic environment
@@ -270,8 +271,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Glibc]
 
-    container: alpine
-    options: --privileged
+    container:
+        image: alpine
+        options: --privileged
 
     steps:
         - name: Setup basic environment
