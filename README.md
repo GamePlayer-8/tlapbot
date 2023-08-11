@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="actions"><img src="https://github.com/GamePlayer-8/tlapbot/actions/workflows/master.yml/badge.svg?branch=main" alt=":master_workflow:" height="15" /></a>
-  <a href="issues"><img alt=":github_issues:" src="https://img.shields.io/github/issues/GamePlayer-8/tlapbot" height="15" /></a>
-  <a href="discussions"><img alt=":code_size:" src="https://img.shields.io/github/languages/code-size/GamePlayer-8/tlapbot" height="15" /></a>
+  <a href="actions"><img src="https://github.com/GamePlayer-8/tlapbot/actions/workflows/master.yml/badge.svg?branch=main" alt=":master_workflow:" height="20" /></a>
+  <a href="issues"><img alt=":github_issues:" src="https://img.shields.io/github/issues/GamePlayer-8/tlapbot" height="20" /></a>
+  <a href="discussions"><img alt=":code_size:" src="https://img.shields.io/github/languages/code-size/GamePlayer-8/tlapbot" height="20" /></a>
 </p>
 
 Tlapbot is an [Owncast](https://owncast.online/) bot that adds channel points and
