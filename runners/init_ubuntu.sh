@@ -6,7 +6,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt update > /dev/null
 cd /source
 
-apt install --yes python3-pip linux-headers-$(uname -r) build-essential python3-dev xvfb appstream tar lsb-release apt-utils file upx > /dev/null
+apt install --yes python3-pip linux-headers-$(uname -r) build-essential bash python3-dev xvfb appstream tar lsb-release apt-utils file upx > /dev/null
 
 pip install --upgrade wheel setuptools > /dev/null
 sh scripts/generate_requirements.sh resource/setup.py requirements.txt
@@ -25,7 +25,8 @@ for X in $(find . -name '__pycache__'); do
     rm -rf "$X"
 done
 
-cp /source/patches/* /source/resource/tlapbot/
+cp -r /source/patches/* /source/resource/tlapbot/
+bash /source/scripts/powerpatch.sh /source/patchespartial /source/resource/tlapbot
 
 py_data_tlapbot=""
 for X in ./resource/tlapbot/*; do

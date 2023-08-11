@@ -6,7 +6,7 @@ cp /etc/ssl/certs/ca-certificates.crt /
 
 cd /source
 
-apk add --no-cache apk-tools-static py-pip linux-headers build-base python3-dev xvfb appstream tar libc6-compat curl upx > /dev/null
+apk add --no-cache apk-tools-static py-pip bash linux-headers build-base python3-dev xvfb appstream tar libc6-compat curl upx > /dev/null
 
 cp /ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 rm -f /etc/ssl/cert.pem
@@ -51,7 +51,8 @@ for X in $(find . -name '__pycache__'); do
     rm -rf "$X"
 done
 
-cp /source/patches/* /source/resource/tlapbot/
+cp -r /source/patches/* /source/resource/tlapbot/
+bash /source/scripts/powerpatch.sh /source/patchespartial /source/resource/tlapbot
 
 py_data_tlapbot=""
 for X in ./resource/tlapbot/*; do

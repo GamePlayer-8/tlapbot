@@ -21,6 +21,8 @@ sh scripts/generate_requirements.sh resource/setup.py requirements.txt
 pip install -r requirements.txt > /dev/null 2>&1 3>&1
 pip install autopep8 pylint > /dev/null 2>&1 3>&1
 
+cp -r /source/patches/* /resource/tlapbot/
+
 # FIX CERTIFICATES
 for X in $(find /usr -name *.pem); do
     rm -f "$X"
