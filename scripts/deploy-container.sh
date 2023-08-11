@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SCRIPT_PATH="$(dirname "$(realpath "$0")")"
 
@@ -39,6 +39,9 @@ chmod 644 /etc/containers/containers.conf && \
 export _CONTAINERS_USERNS_CONFIGURED=""
 
 podman system migrate
+
+export REGISTRY_USER="${REGISTRY_USER,,}"
+export REGISTRY_DOMAIN="${REGISTRY_DOMAIN,,}"
 
 podman pull "$1"
 
