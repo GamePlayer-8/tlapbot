@@ -217,6 +217,106 @@ jobs:
             name: Glibc Binary
             path: /artifacts/Binary
 
+  AlpineContainer:
+    runs-on: ubuntu-latest
+    needs: [Musl]
+
+    container: alpine
+
+    steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          uses: actions/checkout@v3
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apk add --no-cache jq curl
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Set up deployment
+          run: |
+            echo "REGISTRY_USER=${{ github.repository_owner }}" >> $GITHUB_ENV
+            echo "REGISTRY_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+            echo "REGISTRY_DOMAIN=ghcr.io" >> $GITHUB_ENV
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Musl Binary
+            path: /source/dock/alpine
+
+        - name: Check
+          run: |
+              ls /source/dock/alpine
+
+        - name: Run Init.
+          run: |
+              cd /source
+              sh scripts/deploy-container.sh alpine tlapbot-alpine:"$GIT_BRANCH" dock/alpine
+
+  UbuntuContainer:
+    runs-on: ubuntu-latest
+    needs: [Glibc]
+
+    container: alpine
+
+    steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          uses: actions/checkout@v3
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apk add --no-cache jq curl
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Set up deployment
+          run: |
+            echo "REGISTRY_USER=${{ github.repository_owner }}" >> $GITHUB_ENV
+            echo "REGISTRY_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+            echo "REGISTRY_DOMAIN=ghcr.io" >> $GITHUB_ENV
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Glibc Binary
+            path: /source/dock/ubuntu
+
+        - name: Run Init.
+          run: |
+              cd /source
+              sh scripts/deploy-container.sh ubuntu tlapbot-ubuntu:"$GIT_BRANCH" dock/ubuntu
+
   Pages:
     runs-on: ubuntu-latest
     needs: [Musl, Windows, GLibc]
