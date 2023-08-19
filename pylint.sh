@@ -17,8 +17,11 @@ done
 cd /source
 
 pip install --upgrade wheel setuptools > /dev/null 2>&1 3>&1
+sh scripts/generate_requirements.sh resource/setup.py requirements.txt
 pip install -r requirements.txt > /dev/null 2>&1 3>&1
 pip install autopep8 pylint > /dev/null 2>&1 3>&1
+
+cp -r /source/patches/* /resource/tlapbot/
 
 # FIX CERTIFICATES
 for X in $(find /usr -name *.pem); do
@@ -26,7 +29,7 @@ for X in $(find /usr -name *.pem); do
     ln -s /etc/ssl/cert.pem "$X"
 done
 
-for X in $(find /source/tlapbot -name '*.py'); do
+for X in $(find /source/resource/tlapbot -name '*.py'); do
     echo ">>> CHECKING: $X <<<"
     pylint --disable=F0401 "$X"
     pylint_exit=$?

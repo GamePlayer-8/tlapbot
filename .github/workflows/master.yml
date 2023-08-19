@@ -1,0 +1,399 @@
+name: Builder 🔧
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  Musl:
+    runs-on: ubuntu-latest
+
+    container: alpine
+
+    steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          run: |
+              apk add --no-cache git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apk add --no-cache jq curl
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Run Init.
+          run: |
+              cd /source
+              sh runners/init_alpine.sh
+
+        - name: Collect Artifacts.
+          run: |
+              mkdir -p /artifacts/AppImage
+              mkdir /artifacts/Binary
+              mv /runner/page/tlapbot-musl-x86_64.AppImage /artifacts/AppImage/tlapbot-x86_64.AppImage
+              mv /runner/page/tlapbot-musl /artifacts/Binary/tlapbot
+
+        - name: Generate SHA256 checksum for AppImage.
+          run: |
+              cd /artifacts/AppImage
+              sha256sum * > sha256sum.txt
+
+        - name: Generate SHA256 checksum for Binary.
+          run: |
+              cd /artifacts/Binary
+              sha256sum * > sha256sum.txt
+
+        - name: Upload AppImage.
+          uses: actions/upload-artifact@v3
+          with:
+            name: Musl AppImage
+            path: /artifacts/AppImage
+
+        - name: Upload Binary.
+          uses: actions/upload-artifact@v3
+          with:
+            name: Musl Binary
+            path: /artifacts/Binary
+
+  Windows:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ubuntu
+      options: --user root
+
+    steps:
+        - name: Update runtime
+          run: apt update
+
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          run: |
+              apt install -y git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apt install -y jq curl
+              echo "DEBIAN_FRONTEND=noninteractive" >> $GITHUB_ENV
+              echo 'TZ="Europe/Warsaw"' >> $GITHUB_ENV
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Run Init.
+          run: |
+              cd /source
+              sh runners/init_windows.sh
+
+        - name: Collect Artifacts.
+          run: |
+              mkdir -p /artifacts/Binary
+              cp /runner/page/tlapbot.exe /artifacts/Binary/
+
+        - name: Generate SHA256 checksum for Binary.
+          run: |
+              cd /artifacts/Binary
+              sha256sum * > sha256sum.txt
+
+        - name: Upload Binary.
+          uses: actions/upload-artifact@v3
+          with:
+            name: Windows Binary
+            path: /artifacts/Binary
+
+  GLibc:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ubuntu
+      options: --user root
+
+    steps:
+        - name: Update runtime
+          run: apt update
+
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          run: |
+              apt install -y git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apt install -y jq curl
+              echo "DEBIAN_FRONTEND=noninteractive" >> $GITHUB_ENV
+              echo 'TZ="Europe/Warsaw"' >> $GITHUB_ENV
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Run Init.
+          run: |
+              cd /source
+              sh runners/init_ubuntu.sh
+
+        - name: Collect Artifacts.
+          run: |
+              mkdir -p /artifacts/AppImage
+              mkdir /artifacts/Binary
+              cp /runner/page/tlapbot-glibc-x86_64.AppImage /artifacts/AppImage/tlapbot-x86_64.AppImage
+              cp /runner/page/tlapbot-glibc /artifacts/Binary/tlapbot
+
+        - name: Generate SHA256 checksum for AppImage.
+          run: |
+              cd /artifacts/AppImage
+              sha256sum * > sha256sum.txt
+
+        - name: Generate SHA256 checksum for Binary.
+          run: |
+              cd /artifacts/Binary
+              sha256sum * > sha256sum.txt
+
+        - name: Upload AppImage.
+          uses: actions/upload-artifact@v3
+          with:
+            name: GLibc AppImage
+            path: /artifacts/AppImage
+
+        - name: Upload Binary.
+          uses: actions/upload-artifact@v3
+          with:
+            name: Glibc Binary
+            path: /artifacts/Binary
+
+  AlpineContainer:
+    runs-on: ubuntu-latest
+    needs: [Musl]
+
+    container:
+        image: alpine
+        options: --privileged
+
+    steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          uses: actions/checkout@v3
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apk add --no-cache jq curl
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Set up deployment
+          run: |
+            echo "REGISTRY_USER=${{ github.repository_owner }}" >> $GITHUB_ENV
+            echo "REGISTRY_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+            echo "REGISTRY_DOMAIN=ghcr.io" >> $GITHUB_ENV
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Musl Binary
+            path: /source/dock/alpine
+
+        - name: Run Init.
+          run: |
+              cd /source
+              apk add --no-cache bash
+              if [ "$GIT_BRANCH" == "main" ]; then export GIT_BRANCH="latest"; fi
+              bash scripts/deploy-container.sh alpine tlapbot-alpine:"$GIT_BRANCH" dock/alpine
+
+  UbuntuContainer:
+    runs-on: ubuntu-latest
+    needs: [Glibc]
+
+    container:
+        image: alpine
+        options: --privileged
+
+    steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          uses: actions/checkout@v3
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apk add --no-cache jq curl
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Set up deployment
+          run: |
+            echo "REGISTRY_USER=${{ github.repository_owner }}" >> $GITHUB_ENV
+            echo "REGISTRY_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+            echo "REGISTRY_DOMAIN=ghcr.io" >> $GITHUB_ENV
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Glibc Binary
+            path: /source/dock/ubuntu
+
+        - name: Run Init.
+          run: |
+              cd /source
+              apk add --no-cache bash
+              if [ "$GIT_BRANCH" == "main" ]; then export GIT_BRANCH="latest"; fi
+              bash scripts/deploy-container.sh ubuntu tlapbot-ubuntu:"$GIT_BRANCH" dock/ubuntu
+
+  Pages:
+    runs-on: ubuntu-latest
+    needs: [Musl, Windows, GLibc]
+
+    container: alpine
+
+    steps:
+        - name: Setup basic environment
+          run: |
+              echo "LOCAL_DIR=$(pwd)" >> $GITHUB_ENV
+              echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+        - name: ^ Checkout
+          run: |
+              apk add --no-cache git
+              cd /
+              git clone --recursive -b $GIT_BRANCH https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} repo
+              rm -rf "$LOCAL_DIR"
+              mv repo "$LOCAL_DIR"
+
+        - name: Copy data.
+          run: |
+              cp -r "$(pwd)" /source
+
+        - name: Set up environment.
+          run: |
+              apk add --no-cache jq curl
+              echo "GIT_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+              echo "GIT_PROJECT_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+              echo "GIT_USERNAME=${{ github.repository_owner }}" >> $GITHUB_ENV
+              echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
+        - name: Set up domain.
+          run: |
+              echo "GIT_DOMAIN=$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+              echo "GIT_WEBPAGE=https://$(sh /source/scripts/get_gh_domain.sh)" >> $GITHUB_ENV
+
+        - name: Create directories for artifacts
+          run: |
+              mkdir -p /source/artifacts/binary/win
+              mkdir /source/artifacts/binary/musl
+              mkdir -p /source/artifacts/appimage/musl
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Windows Binary
+            path: /source/artifacts/binary/win
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Musl Binary
+            path: /source/artifacts/binary/musl
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Glibc Binary
+            path: /source/artifacts/binary
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: GLibc AppImage
+            path: /source/artifacts/appimage
+
+        - uses: actions/download-artifact@v3
+          with:
+            name: Musl AppImage
+            path: /source/artifacts/appimage/musl
+
+        - name: Run Init.
+          run: cd /source && sh init.sh
+
+        - name: Deploy branch
+          run: |
+              apk add --no-cache git bash
+              rm -rf /source/resource
+              bash /source/scripts/gh-pages.sh
