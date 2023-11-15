@@ -19,6 +19,13 @@ steps:
       - cp docs/icon.png res/
       - sh index.sh
   
+  Windows:
+    image: ubuntu
+
+    commands:
+      - export ICON=../res/icon.ico
+      - sh build.sh windows
+
   Musl:
     image: alpine
 
@@ -32,13 +39,6 @@ steps:
     commands:
       - export ICON=../res/icon.png
       - sh build.sh ubuntu
-  
-  Windows:
-    image: ubuntu
-
-    commands:
-      - export ICON=../res/icon.ico
-      - sh build.sh windows
   
   Upload:
     image: codeberg.org/gameplayer-8/gitio

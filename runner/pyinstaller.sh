@@ -133,14 +133,6 @@ upx_version() {
     cut -d '"' -f 4
 }
 
-if [ "$PLATFORM" = "windows" ]; then
-    export WINEPREFIX=/tmp/wine
-    export WINEDEBUG="-all"
-    export PYTHON_VERSION=$(python_version)
-    export UPX_VERSION=$(upx_version)
-    export WINEDLLOVERRIDES="winemenubuilder.exe,mscoree,mshtml="
-fi
-
 py_deps=""
 for X in $(cat requirements.txt); do
     py_deps=$py_deps' --collect-all '$X
@@ -174,17 +166,13 @@ for X in .; do
     fi
 done
 
-if ! [ "$PLATFORM" = "windows" ]; then
-    if [ -f "setup.py" ]; then
-        python3 setup.py build
-        python3 setup.py install
-    fi
+if [ "$PLATFORM" = "windows" ]; then
+    export WINEPREFIX=/tmp/wine
+    export WINEDEBUG="-all"
+    export PYTHON_VERSION=$(python_version)
+    export UPX_VERSION=$(upx_version)
+    export WINEDLLOVERRIDES="winemenubuilder.exe,mscoree,mshtml="
 
-    pyinstaller -F --onefile --windowed \
-    --additional-hooks-dir=. $py_dirs $py_data \
-    $py_deps -i "$ICON" -n "$BINARY_NAME" -c "$LAUNCH_SCRIPT"
-
-else
     xvfb-run sh -c "wine reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion' /v CurrentVersion /d 10.0 /f && \
     wine reg add 'HKCU\Software\Wine\DllOverrides' /v winemenubuilder.exe /t REG_SZ /d '' /f && \
     wine reg add 'HKCU\Software\Wine\DllOverrides' /v mscoree /t REG_SZ /d '' /f && \
@@ -242,6 +230,15 @@ else
     OLD_BINARY_NAME="$BINARY_NAME"
     BINARY_NAME="${BINARY_NAME}.exe"
     sed -i 's/waitress/gunicorn/g' requirements.txt
+else
+    if [ -f "setup.py" ]; then
+        python3 setup.py build
+        python3 setup.py install
+    fi
+
+    pyinstaller -F --onefile --windowed \
+    --additional-hooks-dir=. $py_dirs $py_data \
+    $py_deps -i "$ICON" -n "$BINARY_NAME" -c "$LAUNCH_SCRIPT"
 fi
 
 mv "dist/$BINARY_NAME" "../$BINARY_NAME"
