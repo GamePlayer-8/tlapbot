@@ -191,8 +191,8 @@ else
     wine reg add 'HKCU\Software\Wine\DllOverrides' /v mshtml /t REG_SZ /d '' /f; \
     wineserver -w"
 
-    curl -s https://www.python.org/ftp/python/${PYTHON_VERSION}/python-${PYTHON_VERSION}-amd64.exe -o /tmp/python-${PYTHON_VERSION}-amd64.exe
-    curl -s https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-win64.zip -o /tmp/upx-${UPX_VERSION}-win64.zip
+    curl https://www.python.org/ftp/python/${PYTHON_VERSION}/python-${PYTHON_VERSION}-amd64.exe -o /tmp/python-${PYTHON_VERSION}-amd64.exe
+    curl https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-win64.zip -o /tmp/upx-${UPX_VERSION}-win64.zip
 
     xvfb-run sh -c "\
         wine /tmp/python-${PYTHON_VERSION}-amd64.exe /quiet TargetDir=C:\\Python310 \
