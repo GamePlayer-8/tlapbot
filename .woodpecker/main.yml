@@ -1,0 +1,49 @@
+# .woodpecker/main.yml
+when:
+  branch: [main,dev]
+
+steps:
+  Main:
+    image: codeberg.org/gameplayer-8/markdown-html
+
+    commands:
+      - mkdir app
+      - cp -r resource/tlapbot/* app/
+      - cp resource/*.py app/
+      - cp resource/*.in app/
+      - cp requirements.txt app/
+      - cp patches/* app/ -r
+      - sh index.sh
+  
+  Musl:
+    image: alpine
+
+    commands:
+      - sh build.sh alpine
+  
+  GLibC:
+    image: ubuntu
+
+    commands:
+      - sh build.sh ubuntu
+  
+  Windows:
+    image: ubuntu
+
+    commands:
+      - sh build.sh windows
+  
+  Upload:
+    image: codeberg.org/gameplayer-8/gitio
+
+    commands:
+      - sh prepare-container.sh
+      - export CONTAINER_TAGGING="$(basename "$CI_COMMIT_REF")"
+      - if [ "$CONTAINER_TAGGING" = "main" ]; then export CONTAINER_TAGGING="latest"; fi
+      - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"$CONTAINER_TAGGING" GIT_WORKDIR:dock/alpine
+      - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"${CONTAINER_TAGGING}-ubuntu" GIT_WORKDIR:dock/ubuntu
+      - sh post-container.sh
+      - sh pages.sh
+    
+    secrets:
+      - SYSTEM_TOKEN_PASSWD
