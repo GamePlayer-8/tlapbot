@@ -23,7 +23,9 @@ windows() {
     # Build for Windows
     export PLATFORM="windows"
     sh runner/pyinstaller.sh
-    rename dist windows
+    mkdir windows
+    mv dist/* windows/
+    rm -rf dist
     mv windows dists/
 }
 
@@ -31,7 +33,9 @@ ubuntu() {
     # Build for Ubuntu
     export PLATFORM="ubuntu"
     sh runner/pyinstaller.sh
-    rename dist ubuntu
+    mkdir ubuntu
+    mv dist/* ubuntu/
+    rm -rf dist
     mv ubuntu dists/
 }
 
@@ -39,7 +43,9 @@ alpine() {
     # Build for Alpine
     export PLATFORM="alpine"
     sh runner/pyinstaller.sh
-    rename dist alpine
+    mkdir alpine
+    mv dist/* alpine/
+    rm -rf dist
     mv alpine dists/
 }
 
