@@ -1,7 +1,7 @@
 FROM ubuntu
 
 # Set environment variables
-ENV USER_NAME=myuser
+ENV USER_NAME=tlapbot
 ENV USER_ID=1000
 ENV GROUP_ID=1000
 
