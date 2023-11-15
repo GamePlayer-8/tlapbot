@@ -44,6 +44,15 @@ steps:
     image: codeberg.org/gameplayer-8/gitio
 
     commands:
+      - sh pages.sh
+    
+    secrets:
+      - SYSTEM_TOKEN_PASSWD
+
+  Containers:
+    image: codeberg.org/gameplayer-8/gitio
+
+    commands:
       - sh prepare-container.sh
       - export CONTAINER_TAGGING="$(basename "$CI_COMMIT_REF")"
       - if [ "$CONTAINER_TAGGING" = "main" ]; then export CONTAINER_TAGGING="latest"; fi
@@ -51,7 +60,6 @@ steps:
       - export UBUNTU_TAG="$CONTAINER_TAGGING"-ubuntu
       - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"$UBUNTU_TAG" GIT_WORKDIR:dock/ubuntu
       - sh post-container.sh
-      - sh pages.sh
     
     secrets:
       - SYSTEM_TOKEN_PASSWD
