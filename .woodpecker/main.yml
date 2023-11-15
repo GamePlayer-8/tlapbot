@@ -13,28 +13,31 @@ steps:
       - cp resource/*.in app/
       - cp requirements.txt app/
       - cp patches/* app/ -r
-      - mkdir app/res
-      - cp docs/*.svg app/res/
-      - cp docs/*.ico app/res/
-      - cp docs/icon.png app/res/
+      - mkdir res
+      - cp docs/*.svg res/
+      - cp docs/*.ico res/
+      - cp docs/icon.png res/
       - sh index.sh
   
   Musl:
     image: alpine
 
     commands:
+      - export ICON=../res/icon.png
       - sh build.sh alpine
   
   GLibC:
     image: ubuntu
 
     commands:
+      - export ICON=../res/icon.png
       - sh build.sh ubuntu
   
   Windows:
     image: ubuntu
 
     commands:
+      - export ICON=../res/icon.ico
       - sh build.sh windows
   
   Upload:
