@@ -48,7 +48,8 @@ steps:
       - export CONTAINER_TAGGING="$(basename "$CI_COMMIT_REF")"
       - if [ "$CONTAINER_TAGGING" = "main" ]; then export CONTAINER_TAGGING="latest"; fi
       - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"$CONTAINER_TAGGING" GIT_WORKDIR:dock/alpine
-      - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"${CONTAINER_TAGGING}-ubuntu" GIT_WORKDIR:dock/ubuntu
+      - export UBUNTU_TAG="${CONTAINER_TAGGING}"-ubuntu
+      - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"$UBUNTU_TAG" GIT_WORKDIR:dock/ubuntu
       - sh post-container.sh
       - sh pages.sh
     
