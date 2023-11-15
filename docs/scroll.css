@@ -1,0 +1,38 @@
+/* width */
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: linear-gradient(#ffe18e, #b671ff);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(#fff19992, #9000ff);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(#fdff8792, #6600b4);
+}
+
+/* For Mozilla-based browsers */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #ffd500 #ffffff;
+}
+
+html::-moz-scrollbar {
+    width: 10px;
+}
+
+html::-moz-scrollbar-track {
+    background-color: #ffffff;
+}
+
+html::-moz-scrollbar-thumb {
+    background-color: #ffd500;
+    border-radius: 5px;
+}

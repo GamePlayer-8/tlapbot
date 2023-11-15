@@ -1,0 +1,10 @@
+# .woodpecker/linter.yml
+when:
+  branch: [main,dev]
+
+steps:
+  pylint:
+    image: alpine
+
+    commands:
+      - sh pylint.sh 2>&1 3>&1 | tee /tmp/pylint-"$(date +%Y-%m-%d)".log

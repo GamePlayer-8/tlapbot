@@ -1,0 +1,65 @@
+# .woodpecker/main.yml
+when:
+  branch: [main,dev]
+
+steps:
+  Main:
+    image: codeberg.org/gameplayer-8/markdown-html
+
+    commands:
+      - mkdir app
+      - cp -r resource/tlapbot/* app/
+      - cp resource/*.py app/
+      - cp resource/*.in app/
+      - cp requirements.txt app/
+      - cp patches/* app/ -r
+      - mkdir res
+      - cp docs/*.svg res/
+      - cp docs/*.ico res/
+      - cp docs/icon.png res/
+      - sh index.sh
+  
+  Windows:
+    image: ubuntu
+
+    commands:
+      - export ICON=../res/icon.ico
+      - sh build.sh windows
+
+  Musl:
+    image: alpine
+
+    commands:
+      - export ICON=../res/icon.png
+      - sh build.sh alpine
+  
+  GLibC:
+    image: ubuntu
+
+    commands:
+      - export ICON=../res/icon.png
+      - sh build.sh ubuntu
+  
+  Upload:
+    image: codeberg.org/gameplayer-8/gitio
+
+    commands:
+      - sh pages.sh
+    
+    secrets:
+      - SYSTEM_TOKEN_PASSWD
+
+  Containers:
+    image: codeberg.org/gameplayer-8/gitio
+
+    commands:
+      - sh prepare-container.sh
+      - export CONTAINER_TAGGING="$(basename "$CI_COMMIT_REF")"
+      - if [ "$CONTAINER_TAGGING" = "main" ]; then export CONTAINER_TAGGING="latest"; fi
+      - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"$CONTAINER_TAGGING" GIT_WORKDIR:dock/alpine
+      - export UBUNTU_TAG="$CONTAINER_TAGGING"-ubuntu
+      - gitio container OUTPUT_IMAGE_NAME:$CI_REPO_NAME:"$UBUNTU_TAG" GIT_WORKDIR:dock/ubuntu
+      - sh post-container.sh
+    
+    secrets:
+      - SYSTEM_TOKEN_PASSWD
