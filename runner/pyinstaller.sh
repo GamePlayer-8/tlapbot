@@ -247,10 +247,8 @@ fi
 mv "dist/$BINARY_NAME" "../$BINARY_NAME"
 rm -rf dist build log
 
-cd ..
-
-strip "$BINARY_NAME"
-chmod +x "$BINARY_NAME"
+strip "../$BINARY_NAME"
+chmod +x "../$BINARY_NAME"
 
 if ! [ "$PLATFORM" = "windows" ]; then
     case "$PLATFORM" in
@@ -322,7 +320,7 @@ if ! [ "$PLATFORM" = "windows" ]; then
     chmod +x "/tmp/${BINARY_NAME}.AppDir/AppRun"
 
     mkdir -p "/tmp/${BINARY_NAME}.AppDir/usr/bin"
-    cp "$BINARY_NAME" "/tmp/${BINARY_NAME}.AppDir/usr/bin/${BINARY_NAME}"
+    cp "../$BINARY_NAME" "/tmp/${BINARY_NAME}.AppDir/usr/bin/${BINARY_NAME}"
     chmod +x "/tmp/${BINARY_NAME}.AppDir/usr/bin/${BINARY_NAME}"
 
     cd /tmp/
@@ -330,7 +328,7 @@ if ! [ "$PLATFORM" = "windows" ]; then
     chmod +x appimagetool-x86_64.AppImage
     ./appimagetool-x86_64.AppImage --appimage-extract
     rm -f appimagetool-x86_64.AppImage
-    mv squashfs-root appimagetool.AppDir
+    rename squashfs-root appimagetool.AppDir
     ln -s /tmp/appimagetool.AppDir/AppRun /usr/local/bin/appimagetool
     chmod +x /opt/appimagetool.AppDir/AppRun
 
