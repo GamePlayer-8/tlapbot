@@ -328,7 +328,9 @@ if ! [ "$PLATFORM" = "windows" ]; then
     chmod +x appimagetool-x86_64.AppImage
     ./appimagetool-x86_64.AppImage --appimage-extract
     rm -f appimagetool-x86_64.AppImage
-    rename squashfs-root appimagetool.AppDir
+    mkdir appimagetool.AppDir
+    mv squashfs-root/* appimagetool.AppDir/
+    rm -rf squashfs-root
     ln -s /tmp/appimagetool.AppDir/AppRun /usr/local/bin/appimagetool
     chmod +x /opt/appimagetool.AppDir/AppRun
 
