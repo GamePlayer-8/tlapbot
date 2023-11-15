@@ -22,7 +22,7 @@ case "$PLATFORM" in
             apk add --no-cache \
                 apk-tools-static py-pip py-pip bash linux-headers \
                 build-base python3-dev xvfb appstream \
-                tar libc6-compat curl upx gawk sed gcompat > /dev/null
+                tar libc6-compat curl upx gawk sed gcompat
 
             pip install --break-system-packages pipx
 
@@ -35,7 +35,7 @@ case "$PLATFORM" in
                     -o /tmp/${pkg}.apk
             done
 
-            apk add --allow-untrusted --no-cache -f /tmp/*.apk > /dev/null
+            apk add --allow-untrusted --no-cache -f /tmp/*.apk
             /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 
             rm -rf /tmp/*.apk
@@ -46,7 +46,7 @@ case "$PLATFORM" in
                 python3-pip \
                 linux-headers-generic build-essential \
                 bash python3-dev sed xvfb appstream tar \
-                lsb-release apt-utils file curl upx gawk > /dev/null
+                lsb-release apt-utils file curl upx gawk
             
             pip install pipx
             ;;
@@ -54,10 +54,10 @@ case "$PLATFORM" in
             apt update > /dev/null
             apt install --yes \
                 wine apt-utils sed tar curl \
-                xvfb winetricks bash gawk > /dev/null
+                xvfb winetricks bash gawk
             dpkg --add-architecture i386
             apt-get update > /dev/null
-            apt-get install --yes wine32 > /dev/null
+            apt-get install --yes wine32
             ;;
     *)
             echo "Unsupported PLATFORM."
@@ -332,7 +332,7 @@ if ! [ "$PLATFORM" = "windows" ]; then
     mv squashfs-root/* appimagetool.AppDir/
     rm -rf squashfs-root
     ln -s /tmp/appimagetool.AppDir/AppRun /usr/local/bin/appimagetool
-    chmod +x /opt/appimagetool.AppDir/AppRun
+    chmod +x /tmp/appimagetool.AppDir/AppRun
 
     appimagetool "/tmp/${BINARY_NAME}.AppDir/"
 
