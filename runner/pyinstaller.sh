@@ -169,7 +169,7 @@ done
 if [ "$PLATFORM" = "windows" ]; then
     export WINEPREFIX=/tmp/wine
     export WINEDEBUG="-all"
-    export PYTHON_VERSION=$(python_version)
+    export PYTHON_VERSION=3.11.0 #$(python_version)
     export UPX_VERSION=$(upx_version)
     export WINEDLLOVERRIDES="winemenubuilder.exe,mscoree,mshtml="
 
