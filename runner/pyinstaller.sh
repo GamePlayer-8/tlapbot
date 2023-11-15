@@ -54,7 +54,7 @@ case "$PLATFORM" in
             apt update > /dev/null
             apt install --yes \
                 wine apt-utils sed tar curl \
-                xvfb winetricks bash gawk
+                xvfb winetricks bash gawk build-essential
             dpkg --add-architecture i386
             apt-get update > /dev/null
             apt-get install --yes wine32
